@@ -4,6 +4,19 @@ let process = new Process();
 process.PopulateJobOrder($("#selectJobOrder"));
 
 
+$("#selectJobOrder").change(function(){
+    let value = $(this).val();
+    let process = $("#txtProcess").val();
+    let user = $("#txtUser").val();
+
+    process.user = user;
+    process.registerID = value;
+    process.process = process;
+
+    checkProcessStatus(process);
+
+});
+
 $("#btnScanUserQR").click(function(){
     
     screen.orientation.lock('portrait');
@@ -11,10 +24,19 @@ $("#btnScanUserQR").click(function(){
     cordova.plugins.barcodeScanner.scan(
         function (result) {
             let scanResult = result.text;
-
+            let registerID = $("#selectJobOrder").val();
+            let processs = $("#txtProcess").val();
             console.log(scanResult);
+
             $("#txtUser").val(scanResult)
             $("#txtDisplayUser").val(scanResult);
+
+            process.user = scanResult;
+            process.registerID = registerID;
+            process.process = processs;
+
+            checkProcessStatus(process);
+
             /* let isValid = operation.CheckUserQR(scanResult);
             let machineCode = $("#txtMachineCode").val();
 
@@ -65,10 +87,22 @@ $("#btnScanProcessQR").click(function(){
     cordova.plugins.barcodeScanner.scan(
         function (result) {
             let scanResult = result.text;
+            let parts = scanResult.split('_');
+            scanResult = parseInt(parts[parts.length - 1], 10);
 
+            let registerID = $("#selectJobOrder").val();
+            let user = $("#txtUser").val();
             console.log(scanResult);
+
             $("#txtProcess").val(scanResult)
             $("#txtDisplayProcess").val(scanResult);
+
+            process.process = scanResult;
+            process.registerID = registerID;
+            process.user = user;
+
+            checkProcessStatus(process);
+
             /* let isValid = operation.CheckUserQR(scanResult);
             let machineCode = $("#txtMachineCode").val();
 
@@ -111,10 +145,85 @@ $("#btnScanProcessQR").click(function(){
     );
 });
 
-function checkProcessStatus(){
+function checkProcessStatus(record){
+    let self = this;
+    let registerID = record.registerID;
+    let user = record.user;
+    let processs = record.process;
 
+    if(registerID != "" && user != "" && processs != ""){
+        process.CheckProcessStatus(process, function(data){
+            let status = data.status;
+            let rid = data.rid;
 
+            if(status == "IN"){
+
+                $("#btnIn").show();
+                $("btnOut").hide();
+                $("#divOut").hide();
+            } else if(status == "OUT"){
+
+                $("#btnIn").hide();
+                $("#btnOut").show();
+                $("#divOut").show();
+                $("#selectStatus").val("");
+                $("#txtRemarks").val("");
+                process.PopulateStatus($("#selectStatus"));
+                $("#hiddenRID").val(rid);
+            }
+
+        });
+    }
 }
+
+$("#btnIn").click(function(){
+    let registerID = $("#selectJobOrder").val();
+    let processs = $("#txtProcess").val();
+    let user = $("#txtUser").val();
+
+    process.registerID = registerID;
+    process.process = processs;
+    process.user = user;
+
+    process.InProcess(process);
+    clearForm();
+});
+
+$("#btnOut").click(function(){
+    let user = $("#txtUser").val();
+    let rid = $("#hiddenRID").val();
+    let status = $("#selectStatus").val();
+    let remarks = $("#txtRemarks").val();
+    
+    process.user = user;
+    process.rid = rid;
+    process.status = status;
+    process.remarks = remarks;
+
+    process.OutProcess(process, function(response){
+        if(response == true){
+            clearForm();
+        }
+    });
+});
+
+$("#btnClear").click(function(){
+
+    clearForm();
+})
+
+function clearForm(){
+
+    $("#btnIn").hide();
+    $("#btnOut").hide();
+    $("#divOut").hide();
+    process.PopulateJobOrder($("#selectJobOrder"))
+    $("#txtDisplayUser").val("");
+    $("#txtUser").val("");
+    $("#txtDisplayProcess").val("");
+    $("#txtProcess").val("");
+}
+
 
 
 

@@ -7,6 +7,15 @@ class Main {
         this.lsEmployeeList = this.systemLocalStorageTitle +"-employee-list";
         this.lsProcessList = this.systemLocalStorageTitle +"-process-list";
     }
+    GetStatusList(){
+        let list = [
+            {a: 0, b:"NO STATUS"},
+            {a: 1, b:"DONE"},
+            {a: 2, b:"ON-GOING"},
+        ]
+
+        return list;
+    }
     
     /* GetEmployeeRecords(){
         let self = this;
@@ -59,6 +68,12 @@ class Main {
             return result ? result.EMPLOYEE_NAME: "";
         }
     } */
+    SetStatus(id){
+        let list = this.GetStatusList();
+        let result = list.find(element => element.a === id);
+
+        return result ? result.b: "";
+    }
 
     CheckConnection(callback){
         let self = this;

@@ -88,7 +88,7 @@
                                     </button>
                                     </div>
                                 </div>
-                                <input type="text" id="txtUser">
+                                <input type="hidden" id="txtUser">
                             </div>
                             <div class="form-group has-info">
                                 <label for="">
@@ -102,9 +102,24 @@
                                     </button>
                                     </div>
                                 </div>
-                                <input type="text" id="txtProcess">
+                                <input type="hidden" id="txtProcess">
                             </div>
-    
+                            <hr>
+                            <div id="divOut" style="display: none;">
+                                <div class="form-group">
+                                    <label for="">
+                                        <strong>STATUS:</strong>
+                                    </label>
+                                    <select id="selectStatus" class="form-control"></select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="">
+                                        <strong>REMARKS:</strong>
+                                    </label>
+                                    <textarea id="txtRemarks" rows="5" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <input type="hidden" id="hiddenRID">
                             <div class="fixed-bottom-button">
                                 <button id="btnIn" class="btn-block btn-success" style="display: none;">IN</button>
                                 <button id="btnOut" class="btn-block btn-danger" style="display: none;">OUT</button>
